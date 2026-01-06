@@ -1,12 +1,13 @@
-body { margin: 0; background: #000; color: #fff; font-family: Arial; text-align: center; padding: 20px; }
-header { padding: 30px; background: linear-gradient(#1a0033, #000); }
+body { margin: 0; background: #000; color: #fff; font-family: Arial; }
+header { text-align: center; padding: 30px; background: linear-gradient(#1a0033, #000); }
 .logo { width: 200px; border-radius: 50%; box-shadow: 0 0 50px #ff00ff; }
 h1 { font-size: 3em; color: #da70d6; text-shadow: 0 0 20px #ff00ff; }
 p { font-size: 1.2em; color: #bbb; }
-#chat { max-width: 800px; margin: 20px auto; height: 500px; overflow-y: auto; background: #1a0033; border-radius: 20px; padding: 20px; text-align: left; }
+#chat { max-width: 800px; margin: 20px auto; min-height: 60vh; overflow-y: auto; padding: 20px; background: #1a0033; border-radius: 20px; }
 .message { padding: 15px; border-radius: 20px; margin: 10px 0; max-width: 80%; }
-.bot { background: #800080; align-self: flex-start; }
-.user { background: #da70d6; align-self: flex-end; margin-left: auto; }
-input { width: 70%; padding: 15px; background: #1a0033; color: #fff; border: none; border-radius: 50px; font-size: 1.2em; }
-button { padding: 15px 30px; background: #ff00ff; color: white; border: none; border-radius: 50px; cursor: pointer; font-size: 1.2em; }
-button:hover { box-shadow: 0 0 30px #ff00ff; }
+.user { background: #800080; align-self: flex-end; margin-left: auto; }
+.bot { background: #2a003a; align-self: flex-start; }
+.input-area { max-width: 800px; margin: 0 auto; display: flex; padding: 20px; }
+#user-input { flex: 1; padding: 15px; background: #1a0033; border: none; border-radius: 50px; color: #fff; font-size: 1.2em; }
+button { padding: 15px 30px; background: #ff00ff; color: white; border: none; border-radius: 50px; cursor: pointer; margin-left: 10px; }
+button:hover { box-shadow: 0 0 40px #ff00ff; }

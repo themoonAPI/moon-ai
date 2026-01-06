@@ -1,28 +1,52 @@
-// moon-AI Script – Real AI Chat with Puter.js
+// moon-AI Script – With New Chat Feature
+
+let history = JSON.parse(localStorage.getItem('chatHistory')) || [];
+let isOwner = localStorage.getItem('isOwner') === 'true';
+const SECRET_CODE = "xai-moon-2026";
 
 async function send() {
     let input = document.getElementById('user-input');
     let message = input.value.trim();
     if (!message) return;
 
-    // Add user message to chat
     addMessage(message, 'user');
     input.value = '';
 
-    // Show "thinking" placeholder
-    addMessage('🌙 Thinking...', 'bot');
+    let placeholder = addMessage('🌙 Thinking...', 'bot');
 
     try {
-        // Call real AI via Puter.js (free, powerful models)
-        const response = await puter.ai.chat(message, {
-            model: "gpt-4o-mini"  // Fast & smart. Alternatives: "gpt-5-nano", "claude-3-haiku"
-        });
+        if (message.toLowerCase().includes('owner code: ' + SECRET_CODE)) {
+            isOwner = true;
+            localStorage.setItem('isOwner', 'true');
+            updateStatus();
+            replaceMessage(placeholder, 'Owner verified! Moon mode unlocked. 😎');
+            return;
+        }
 
-        // Replace "thinking" with real response
-        replaceLastBotMessage(response);
+        if (message.toLowerCase().includes('check link') || message.toLowerCase().includes('is this safe')) {
+            const link = message.match(/https?:\/\/[^\s]+/g);
+            if (link) {
+                const analysis = await puter.ai.chat(`Moon's take on this link: ${link[0]}. Virus? Scam? Safe? Be witty.`, { model: "gpt-4o-mini" });
+                replaceMessage(placeholder, analysis);
+                return;
+            }
+        }
+
+        history.push({ role: "user", content: message });
+        if (history.length > 20) history = history.slice(-20);
+
+        const response = await puter.ai.chat(history, { model: "gpt-4o-mini" });
+
+        history.push({ role: "assistant", content: response });
+        localStorage.setItem('chatHistory', JSON.stringify(history));
+
+        let reply = response;
+        if (isOwner) reply = "[Boss Mode] " + reply + " – At your service. 🚀";
+        else if (Math.random() > 0.5) reply += " – Moon•API powered. 🌙";
+
+        replaceMessage(placeholder, reply);
     } catch (error) {
-        replaceLastBotMessage('⚠️ AI is taking a moon nap... Try again!');
-        console.error(error);
+        replaceMessage(placeholder, '⚠️ Connection lost... Try again!');
     }
 }
 
@@ -33,16 +57,34 @@ function addMessage(text, type) {
     div.textContent = text;
     chat.appendChild(div);
     chat.scrollTop = chat.scrollHeight;
+    return div;
 }
 
-function replaceLastBotMessage(text) {
-    let chat = document.getElementById('chat');
-    if (chat.lastChild && chat.lastChild.classList.contains('bot')) {
-        chat.lastChild.textContent = text;
+function replaceMessage(element, text) {
+    if (element) element.textContent = text;
+}
+
+function updateStatus() {
+    let status = document.getElementById('status');
+    status.textContent = isOwner ? 'Owner Mode Active 🌙' : '';
+}
+
+// New Chat Feature – Clears history, keeps owner mode
+function newChat() {
+    if (confirm('Start a new chat? (Clears memory)')) {
+        history = [];
+        localStorage.removeItem('chatHistory');
+        document.getElementById('chat').innerHTML = '';
+        addMessage("New chat started! I'm moon-AI 🌙 What's up?", 'bot');
     }
 }
 
-// Welcome message when page loads
-window.onload = function() {
-    addMessage("Hello! I'm moon-AI 🌙\nPowered by real AI — ask me anything!", 'bot');
-};
+// Load history
+history.forEach(msg => addMessage(msg.content, msg.role === 'user' ? 'user' : 'bot'));
+
+// Welcome if empty
+if (history.length === 0) {
+    addMessage("Hey! I'm moon-AI 🌙 Real AI with memory. 'New Chat' button for fresh start. Ask anything!", 'bot');
+}
+
+updateStatus();

@@ -5,22 +5,60 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>moon-AI</title>
     <link rel="stylesheet" href="style.css">
+    <!-- Puter.js - Free AI access, no key, no download -->
+    <script src="https://js.puter.com/v2/"></script>
 </head>
 <body>
     <header>
         <img src="logo.png" alt="Moon Logo" class="logo">
         <h1>moon-AI</h1>
-        <p>Your Space-Themed AI Chat</p>
+        <p>Real AI Chat – No Login, No Key, No Limits</p>
     </header>
 
     <main>
-        <div id="chat">
-            <div class="message bot">Hello! I'm moon-AI 🌙 Ask me anything.</div>
+        <div id="chat"></div>
+        <div class="input-area">
+            <input id="user-input" placeholder="Ask moon-AI anything..." onkeyup="if(event.key==='Enter') send()">
+            <button onclick="send()">Send</button>
         </div>
-        <input id="input" placeholder="Type message..." onkeyup="if(event.key==='Enter') send()">
-        <button onclick="send()">Send</button>
     </main>
 
-    <script src="script.js"></script>
+    <script>
+    async function send() {
+        let input = document.getElementById('user-input');
+        let message = input.value.trim();
+        if (!message) return;
+
+        addMessage(message, 'user');
+        input.value = '';
+
+        addMessage('Thinking...', 'bot');
+
+        // Real AI call via Puter.js (free, powerful models)
+        try {
+            const response = await puter.ai.chat(message, { model: "gpt-5-nano" }); // Or "gpt-5.1", "gpt-4o"
+            replaceLastBotMessage(response);
+        } catch (e) {
+            replaceLastBotMessage('AI thinking... (check connection)');
+        }
+    }
+
+    function addMessage(text, type) {
+        let chat = document.getElementById('chat');
+        let div = document.createElement('div');
+        div.classList.add('message', type);
+        div.innerText = text;
+        chat.appendChild(div);
+        chat.scrollTop = chat.scrollHeight;
+    }
+
+    function replaceLastBotMessage(text) {
+        let chat = document.getElementById('chat');
+        chat.lastChild.innerText = text;
+    }
+
+    // Welcome
+    addMessage('Hello! I\'m moon-AI 🌙 Powered by real AI – ask anything!', 'bot');
+    </script>
 </body>
 </html>

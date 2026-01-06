@@ -5,13 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>moon-AI</title>
     <link rel="stylesheet" href="style.css">
-    <!-- Puter.js - Free real AI, no key needed -->
     <script src="https://js.puter.com/v2/"></script>
 </head>
 <body>
     <header>
         <h1>moon-AI</h1>
-        <p>Real AI Chat – No Login, No Limits</p>
+        <p>Real AI Chat – With Memory & Owner Mode</p>
+        <button onclick="newChat()" class="new-chat-btn">New Chat</button>
     </header>
 
     <main>
@@ -20,6 +20,7 @@
             <input id="user-input" placeholder="Ask moon-AI anything..." onkeyup="if(event.key==='Enter') send()">
             <button onclick="send()">Send</button>
         </div>
+        <p id="status" class="status"></p>
     </main>
 
     <script src="script.js"></script>

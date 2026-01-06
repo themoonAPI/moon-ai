@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>moon-AI</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <img src="logo.png" alt="Moon Logo" class="logo">
+        <h1>moon-AI</h1>
+        <p>Your Space-Themed AI Chat</p>
+    </header>
+
+    <main>
+        <div id="chat">
+            <div class="message bot">Hello! I'm moon-AI 🌙 Ask me anything.</div>
+        </div>
+        <input id="input" placeholder="Type message..." onkeyup="if(event.key==='Enter') send()">
+        <button onclick="send()">Send</button>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>

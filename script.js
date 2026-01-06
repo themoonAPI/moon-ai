@@ -1,4 +1,4 @@
-// moon-AI Script – With New Chat Feature
+// moon-AI Script – Fixed Connection Issues
 
 let history = JSON.parse(localStorage.getItem('chatHistory')) || [];
 let isOwner = localStorage.getItem('isOwner') === 'true';
@@ -15,38 +15,39 @@ async function send() {
     let placeholder = addMessage('🌙 Thinking...', 'bot');
 
     try {
+        // Owner code
         if (message.toLowerCase().includes('owner code: ' + SECRET_CODE)) {
             isOwner = true;
             localStorage.setItem('isOwner', 'true');
             updateStatus();
-            replaceMessage(placeholder, 'Owner verified! Moon mode unlocked. 😎');
+            replaceMessage(placeholder, 'Owner mode activated! 😎');
             return;
         }
 
-        if (message.toLowerCase().includes('check link') || message.toLowerCase().includes('is this safe')) {
-            const link = message.match(/https?:\/\/[^\s]+/g);
-            if (link) {
-                const analysis = await puter.ai.chat(`Moon's take on this link: ${link[0]}. Virus? Scam? Safe? Be witty.`, { model: "gpt-4o-mini" });
-                replaceMessage(placeholder, analysis);
-                return;
-            }
-        }
+        // Keep history short to avoid timeout
+        let shortHistory = history.slice(-6); // Only last 6 exchanges
+        shortHistory.push({ role: "user", content: message });
 
+        // Use fastest model
+        const response = await puter.ai.chat(shortHistory, { 
+            model: "gpt-4o-mini"  // Fastest & most reliable
+        });
+
+        // Save to full history
         history.push({ role: "user", content: message });
-        if (history.length > 20) history = history.slice(-20);
-
-        const response = await puter.ai.chat(history, { model: "gpt-4o-mini" });
-
         history.push({ role: "assistant", content: response });
+        if (history.length > 20) history = history.slice(-20);
         localStorage.setItem('chatHistory', JSON.stringify(history));
 
         let reply = response;
-        if (isOwner) reply = "[Boss Mode] " + reply + " – At your service. 🚀";
-        else if (Math.random() > 0.5) reply += " – Moon•API powered. 🌙";
+        if (isOwner) reply += " — Boss mode active.";
+        else if (Math.random() > 0.6) reply += " — Moon•API vibes. 🌙";
 
         replaceMessage(placeholder, reply);
     } catch (error) {
-        replaceMessage(placeholder, '⚠️ Connection lost... Try again!');
+        // Better fallback
+        replaceMessage(placeholder, 'Moon signal weak... Try again in a sec! 🌙');
+        console.log("AI error:", error);
     }
 }
 
@@ -69,22 +70,11 @@ function updateStatus() {
     status.textContent = isOwner ? 'Owner Mode Active 🌙' : '';
 }
 
-// New Chat Feature – Clears history, keeps owner mode
-function newChat() {
-    if (confirm('Start a new chat? (Clears memory)')) {
-        history = [];
-        localStorage.removeItem('chatHistory');
-        document.getElementById('chat').innerHTML = '';
-        addMessage("New chat started! I'm moon-AI 🌙 What's up?", 'bot');
-    }
-}
-
-// Load history
+// Load chat
 history.forEach(msg => addMessage(msg.content, msg.role === 'user' ? 'user' : 'bot'));
 
-// Welcome if empty
 if (history.length === 0) {
-    addMessage("Hey! I'm moon-AI 🌙 Real AI with memory. 'New Chat' button for fresh start. Ask anything!", 'bot');
+    addMessage("Hey! I'm moon-AI 🌙\nReal AI, remembers everything, owner mode available.\nLet's chat!", 'bot');
 }
 
 updateStatus();
